@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Species-Stat</title>
+  </head>
+  <body>
+    {% if authenticated %}
+      <div><img src="{{icon_url}}"/><strong>{{username}}</strong></div>
+      {% if not has_userinfo %}
+        <p><a href="{{userinfo_url}}">Enter user info and begin survey</a></p>
+      {% else %}
+        {% if has_pending %}
+          <p><a href="{{responses_url}}">Answer survey ({{pending_responses}} unanswered questions)</a></p>
+        {% endif %}
+        {% if has_answered %}
+          {% if not has_pending %}
+            <p><a href="{{view_url}}">View results</a></p>
+          {% else %}
+            <p><a href="{{view_url}}">View partial results</a></p>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+      <p><a href="{{logout_url}}">If you wish to take the survey as a different user, you must log out first.</a></p>
+    {% else %}
+      <p><a href="{{login_url}}">Log in to begin the survey.</a></p>
+    {% endif %}
+    <hr/>
+    <p>Note that some tracking prevention software (including Firefox in incognito mode with tracking protection enabled) will break all twitter usericon display on this site. It will still otherwise work.</p>
+    <p>The survey part doesn't require javascript, but is nicer with it enabled. The graph on the results page requires javascript to display, so you'll miss out on the best part.</p>
+  </body>
+</html>

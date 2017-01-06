@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      body {
+      color: #101010;
+      background-color: #f0f0f0;
+      }
+
+      strong.username {
+      font-size: 300%;
+      margin-left: 0.5em;
+      }
+
+      div.userblock::before, div.userblock::after {
+      content:"";
+      display: table;
+      }
+      div.userblock::after {
+      clear: both;
+      }
+      div.userblock {
+      zoom:1;
+      }
+
+      div.userblock {
+      border-style: solid;
+      width: 100%;
+      }
+
+      div.speciescategory {
+      width: 20%;
+      float: left;
+      }
+
+      div.speciescategory.vulpini {
+      background-color: #f0c0c0;
+      }
+      div.speciescategory.canidae {
+      background-color: #d0d0d0;
+      }
+      div.speciescategory.felidae {
+      background-color: #e0e0b0;
+      }
+      div.speciescategory.othermammal {
+      background-color: #b0e0e0;
+      }
+      div.speciescategory.othernonmammal {
+      background-color: #c0f0c0;
+      }
+      div.speciescategory.other {
+      background-color: #c0c0c0;
+      font-size: 200%;
+      width: 50%;
+      clear: left;
+      }
+      div.speciescategory.nothing {
+      background-color: #a0a0a0;
+      font-size: 200%;
+      width: 50%;
+      }
+      div.speciescategory {
+      width: 20%;
+      float: left;
+      }
+      div.speciescategory div:not(:first-child){
+      margin-top: 1em;
+      }
+      input.finished {
+      font-size: 300%;
+      width: 100%;
+      text-align: center;
+      }
+
+
+
+      div#progressbar {
+      font-size: 200%;
+      font-weight: bold;
+      width: 100%;
+      text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+      fields = [];
+      active_field_id = 0;
+
+      function initialize_hiding() {
+          create_progress_bar();
+
+          let finished_buttons = document.getElementsByClassName("finished");
+          finished_buttons[0].value = "Skip all remaining responses";
+          finished_buttons[0].style = "margin-top:2em";
+
+          fields = document.getElementsByClassName("userblock");
+          for(let i=0; i<fields.length; i++) {
+              initialize_field(fields[i], i);
+          }
+          for(let i=1; i<fields.length; i++) {
+              deactivate_field(fields[i]);
+          }
+          if(active_field_id < fields.length) {
+              activate_field(fields[active_field_id]);
+          }
+      }
+
+      function create_progress_bar() {
+          let progress_bar = document.createElement("div");
+          progress_bar.id = "progressbar";
+          let t = document.createTextNode("?/?");
+          t.id = "progressbartext";
+          progress_bar.appendChild(t);
+          document.body.insertBefore(progress_bar, document.body.childNodes[0]);
+
+          update_progress_bar();
+      }
+
+      function update_progress_bar() {
+          let progress_bar = document.getElementById("progressbar");
+          for (let i=0; i<progress_bar.childNodes.length; i++) {
+              let t = progress_bar.childNodes[i];
+              if(t.nodeName === "#text") {
+                  t.nodeValue = active_field_id + " / " + fields.length;
+              }
+          }
+      }
+      function submit_form() {
+          let finished_buttons = document.getElementsByClassName("finished");
+          finished_buttons[0].style.display = "none";
+
+          let progress_bar = document.getElementById("progressbar");
+          for (let i=0; i<progress_bar.childNodes.length; i++) {
+              let t = progress_bar.childNodes[i];
+              if(t.nodeName === "#text") {
+                  t.nodeValue = "Processing results...";
+              }
+          }
+
+          let forms = document.getElementsByTagName("form");
+          forms[0].submit();
+      }
+
+      function advance_hiding(index) {
+          if(index != active_field_id) {
+              return;
+          }
+          deactivate_field(fields[active_field_id]);
+          active_field_id += 1;
+          if(active_field_id < fields.length) {
+              activate_field(fields[active_field_id]);
+          } else {
+              submit_form();
+          }
+      }
+
+      function deactivate_field(field) {
+          field.style.display = "none";
+      }
+
+      function initialize_field(field, field_id) {
+          let inputs = field.getElementsByTagName("input");
+          for(let i=0; i<inputs.length; i++) {
+              inputs[i].oninput = function(){advance_hiding(field_id)};
+              inputs[i].onclick = function(){advance_hiding(field_id)};
+          }
+
+          field.style.display = "";
+      }
+
+      function activate_field(field) {
+          field.style.display = "";
+          update_progress_bar();
+      }
+    </script>
+    <title>YAy</title>
+  </head>
+  <body>
+    <form action="../complete/" method="post">
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+      {% for f in form.visible_fields %}
+      <div class="userblock">
+        {{f.errors}}
+        <label><img src="{{f.field.icon_url}}"/><strong class="username">{{f.label}}</strong></label>
+        {{f}}
+        {% if f.help_text %}
+        <p class="help">{{ f.help_text|safe }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <input class="finished" type="submit" value="Submit" />
+    </form>
+    <script type="text/javascript">
+      initialize_hiding();
+    </script>
+  </body>
+</html>

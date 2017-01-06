@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+    </script>
+    <style>
+      html {
+      height: 100%;
+      }
+
+      body {
+      color: #101010;
+      background-color: #f0f0f0;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      }
+
+      div#chart_div {
+      height: 90%;
+      }
+    </style>
+    <title>YAy you won</title>
+  </head>
+  <body>
+    <h1 style="text-align: center">Results for <img src={{summary_icon_url}}/>@{{summary_username}}</h1>
+    <div id="chart_div"></div>
+
+    <script type="text/javascript">
+google.charts.load('current', {packages: ['corechart', 'bar']});
+google.charts.setOnLoadCallback(drawBasic);
+
+function drawBasic() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Species');
+      data.addColumn('number', 'Yours');
+      data.addColumn('number', 'Baseline');
+      data.addColumn('number', 'Relative Frequency');
+
+      data.addRows([
+{% for species,delta,yours,baseline in summary.deltas %}
+['{{species}}', {{yours}}, {{baseline}}, {{delta}}],
+{% endfor %}
+      ]);
+
+var formatter = new google.visualization.NumberFormat({pattern: '#.#%'});
+formatter.format(data, 1);
+formatter.format(data, 2);
+formatter.format(data, 3);
+      var options = {
+hAxis: {slantedTextAngle: 90},
+vAxis: {format: 'percent'},
+vAxes: {
+0: {gridlines: {count: 0}},
+1: {gridlines: {color: '#8080f0'}}
+},
+seriesType: 'bars',
+series: {
+0: {color: '#e08040'},
+1: {color: '#f0e0c0'},
+2: {type: 'line', targetAxisIndex:1, color: '#8080f0'}
+}};
+
+      var chart = new google.visualization.ColumnChart(
+        document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+
+    </script>
+
+  </body>
+</html>

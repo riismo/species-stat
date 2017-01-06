@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>userinfo</title>
+    <style>
+      body {
+      color: #101010;
+      background-color: #f0f0f0;
+      }
+
+      strong.username {
+      font-size: 300%;
+      margin-left: 0.5em;
+      }
+
+      strong.fieldlabel {
+      font-size: 200%;
+      font-weight: normal;
+      }
+
+      div.field {
+      clear: both;
+      }
+
+      div.userblock::before, div.userblock::after {
+      content:"";
+      display: table;
+      }
+      div.userblock::after {
+      clear: both;
+      }
+      div.userblock {
+      zoom:1;
+      }
+
+      div.userblock {
+      border-style: solid;
+      width: 100%;
+      }
+
+      div.speciescategory {
+      width: 20%;
+      float: left;
+      }
+
+      div.speciescategory.vulpini {
+      background-color: #f0c0c0;
+      }
+      div.speciescategory.canidae {
+      background-color: #d0d0d0;
+      }
+      div.speciescategory.felidae {
+      background-color: #e0e0b0;
+      }
+      div.speciescategory.othermammal {
+      background-color: #b0e0e0;
+      }
+      div.speciescategory.othernonmammal {
+      background-color: #c0f0c0;
+      }
+      div.speciescategory.other {
+      background-color: #c0c0c0;
+      font-size: 200%;
+      width: 50%;
+      clear: left;
+      }
+      div.speciescategory.nothing {
+      background-color: #a0a0a0;
+      font-size: 200%;
+      width: 50%;
+      }
+      div.speciescategory {
+      width: 20%;
+      float: left;
+      }
+      div.speciescategory div:not(:first-child){
+      margin-top: 1em;
+      }
+      input.finished {
+      font-size: 300%;
+      width: 100%;
+      text-align: center;
+      }
+
+
+
+      div#progressbar {
+      font-size: 200%;
+      font-weight: bold;
+      width: 100%;
+      text-align: center;
+      }
+    </style>
+    <script type="text/javascript">
+      fields = [];
+      active_field_id = 0;
+
+      function initialize_hiding() {
+          field = document.getElementsByClassName("userblock")[0];
+          let inputs = field.getElementsByTagName("input");
+          for(let i=0; i<inputs.length; i++) {
+              inputs[i].oninput = function(){update()};
+              inputs[i].onclick = function(){update()};
+          }
+
+          update();
+      }
+
+      function hide_other() {
+          field = document.getElementsByClassName("field")[1];
+          field.style.display = "none";
+      }
+
+      function show_other() {
+          field = document.getElementsByClassName("field")[1];
+          field.style.display = "";
+      }
+
+      function update() {
+          field = document.getElementsByClassName("userblock")[0];
+          let inputs = field.getElementsByTagName("input");
+          for(let i=0; i<inputs.length; i++) {
+              if(inputs[i].value != "other") {
+                  continue;
+              }
+
+              if(inputs[i].checked) {
+                  show_other();
+              } else {
+                  hide_other();
+              }
+
+              break;
+          }
+      }
+    </script>
+  </head>
+  <body>
+    <p>Hello! First, describe yourself:</p>
+    <form action="/userinfo/" method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+      <div class="userblock">
+      {% for f in form.visible_fields %}
+        <div class="field">
+        {{f.errors}}
+        <label><img src="{{f.field.icon_url}}"/><strong class="{% if f.field.choices %}username{%else%}fieldlabel{%endif%}">{{f.label}}</strong></label>
+        {{f}}
+        {% if f.help_text %}
+        <p class="help">{{ f.help_text|safe }}</p>
+        {% endif %}
+        </div>
+      {% endfor %}
+      </div>
+      <input class="finished" type="submit" value="Submit" />
+    </form>
+    <script type="text/javascript">
+      initialize_hiding();
+    </script>
+  </body>
+</html>
