@@ -87,7 +87,7 @@ series: {
     <pre>{{ request.build_absolute_uri }}</pre>
     <p>If you wish to take the survey on another account, you may <a href="{{logout_url}}">log out</a></p>
     {% else %}
-    <p><a href="root_url">Go ahead and take the survey for yourself!</a></p>
+    <p><a href="{{root_url}}">Go ahead and take the survey for yourself!</a></p>
     {% endif %}
   </body>
 </html>
