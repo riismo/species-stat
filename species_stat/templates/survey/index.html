@@ -4,6 +4,20 @@
     <title>Species-Stat</title>
   </head>
   <body>
+    <h1>Species-Stat</h1>
+    <p>This is a little web app that was created to test a theory that furries are more likely to associate with other furries with the same fursona species.</p>
+    <p>If that sentence didn't make sense, this project is probably of no interest to you.</p>
+    <p>This does several things:</p>
+    <ul>
+      <li>Requests read-only Twitter access</li>
+      <li>Requests the user input their species</li>
+      <li>Gives the user a survey asking the species (if any) of their Twitter follows</li>
+      <li>Displays a graph of how their responses compare to the overall distribution</li>
+      <li>Gives a sharable link to the user's results</li>
+    </ul>
+    <p>At the end of the survey, you'll get a graph of some data about your responses. You can share your results with a link provided below the graph. If you'd rather not share it, that's fine too: results are not browsable without the user's randomly-generated link.</p>
+    <p>While identifiable data from individual users will not be shared without permission, aggregate data may be shared after taking reasonable steps to protect the privacy of individual users.</p>
+    <p>After completing the survey, you can remove the app's Twitter access by going to settings &gt; apps on your Twitter account and selecting "revoke access" for app Species-Stat. The app doesn't need (or use) any access after you've completed the survey, so you can still share your results after doing this.</p>
     {% if authenticated %}
       <div><img src="{{icon_url}}"/><strong>{{username}}</strong></div>
       {% if not has_userinfo %}

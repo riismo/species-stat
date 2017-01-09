@@ -75,12 +75,11 @@ class User(django.db.models.Model):
                 species_count[response.species.name] += 1
                 total_count += 1
 
-        if total_count == 0:
-            total_count = 1
+        divisor = total_count if total_count else 1
 
         species_pct = {}
         for species, count in species_count.items():
-            species_pct[species] = (1.0*count) / total_count
+            species_pct[species] = (1.0*count) / divisor
 
         deltas = list()
         for category in choices.CATEGORIES:
@@ -93,9 +92,31 @@ class User(django.db.models.Model):
                                    choice.percentage))
 
         deltas.sort(key=lambda x: x[1], reverse=True)
+
         return {
             'deltas': deltas,
+            'text_summary': self.__text_summary(deltas),
         }
+
+    def __text_summary(self, deltas):
+        max_notes = 3
+
+        if len(deltas) < 1:
+            return ('{} did not name any following species.'
+                    .format(self.username))
+        else:
+            summary_header = ("{}'s follow list has "
+                              .format(self.username))
+            notes = []
+            for i in range(len(deltas)
+                           if len(deltas) <= max_notes
+                           else max_notes):
+                notes.append(
+                    '{:.0f}% the normal amount of {}'
+                    .format(deltas[i][1]*100.0, deltas[i][0].lower()))
+
+            notes[-1] = 'and ' + notes[-1]
+        return summary_header + ', '.join(notes) + '.'
 
     def answered_response_count(self):
         """Return number of responses this user has answered.

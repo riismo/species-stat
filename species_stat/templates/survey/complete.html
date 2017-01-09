@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@species_stat"/>
+    <meta name="twitter:title" content="Species-Stat Results for @{{summary_username}}"/>
+    <meta name="twitter:description" content="{{summary.text_summary}}"/>
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
     </script>
+    <title>Species-Stat Results for @{{summary_username}}</title>
     <style>
       html {
-      height: 100%;
       }
 
       body {
       color: #101010;
       background-color: #f0f0f0;
-      height: 100%;
       margin: 0;
       padding: 0;
       }
 
       div#chart_div {
-      height: 90%;
+      width: 100%;
+      height: 30em;
+      }
+
+      pre {
+      color: black;
+      background-color: white;
+      padding: 0.5em;
+      margin: 0 2em;
+      border: solid;
       }
     </style>
-    <title>YAy you won</title>
   </head>
   <body>
     <h1 style="text-align: center">Results for <img src={{summary_icon_url}}/>@{{summary_username}}</h1>
@@ -55,6 +67,7 @@ vAxes: {
 0: {gridlines: {count: 0}},
 1: {gridlines: {color: '#8080f0'}}
 },
+
 seriesType: 'bars',
 series: {
 0: {color: '#e08040'},
@@ -69,6 +82,12 @@ series: {
     }
 
     </script>
-
+    {% if own_results %}
+    <p>Want to share your results? Here you go:</p>
+    <pre>{{ request.build_absolute_uri }}</pre>
+    <p>If you wish to take the survey on another account, you may <a href="{{logout_url}}">log out</a></p>
+    {% else %}
+    <p><a href="root_url">Go ahead and take the survey for yourself!</a></p>
+    {% endif %}
   </body>
 </html>

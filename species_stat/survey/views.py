@@ -266,6 +266,7 @@ def complete(request):
 
 
 @django.views.decorators.http.require_safe
+@decorators.prohibit_invalid_user
 @decorators.require_valid_result_id
 def view_result(request):
     """View the results for anyone you know the result_id of
@@ -273,9 +274,12 @@ def view_result(request):
     template = django.template.loader.get_template('survey/complete.html')
 
     context = {
+        'own_results': request.result_user == request.user,
+        'root_url': django.core.urlresolvers.reverse_lazy('welcome'),
         'summary_username': request.result_user.username,
         'summary_icon_url': request.result_user.icon_url,
         'summary': request.result_user.result_summary(),
+        'logout_url': django.core.urlresolvers.reverse_lazy('logout'),
     }
 
     return django.http.HttpResponse(template.render(context, request))
