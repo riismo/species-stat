@@ -112,7 +112,7 @@ class User(django.db.models.Model):
                            if len(deltas) <= max_notes
                            else max_notes):
                 notes.append(
-                    '{:.0f}% the normal amount of {}'
+                    '{:.0f}% normal {} levels'
                     .format(deltas[i][1]*100.0, deltas[i][0].lower()))
 
             notes[-1] = 'and ' + notes[-1]
